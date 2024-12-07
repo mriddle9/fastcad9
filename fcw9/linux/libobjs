@@ -1,0 +1,4 @@
+LIBOBJS = \
+	fcw9.o \
+	CMainCtrl.o \
+	CDlgAbout.o \

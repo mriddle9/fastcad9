@@ -1,0 +1,73 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32228.430
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fcw9", "fcw9.vcxproj", "{2E84EACE-007C-4D36-A20B-502F89A6803F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{878D15F0-1E45-4E1F-9D87-6933AE738434} = {878D15F0-1E45-4E1F-9D87-6933AE738434}
+		{E9A8896E-124E-454E-85E5-57EFD44F4D7A} = {E9A8896E-124E-454E-85E5-57EFD44F4D7A}
+		{EE11ED1A-3A17-4961-A58C-F9168D366617} = {EE11ED1A-3A17-4961-A58C-F9168D366617}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fwkc", "..\..\..\..\evtk3src\fwkc\win22\fwkc\fwkc.vcxproj", "{E9A8896E-124E-454E-85E5-57EFD44F4D7A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fwkw", "..\..\..\..\evtk3src\fwkw\win22\fwkw\fwkw.vcxproj", "{878D15F0-1E45-4E1F-9D87-6933AE738434}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E9A8896E-124E-454E-85E5-57EFD44F4D7A} = {E9A8896E-124E-454E-85E5-57EFD44F4D7A}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fwke", "..\..\..\..\evtk3src\fwke\win22\fwke\fwke.vcxproj", "{EE11ED1A-3A17-4961-A58C-F9168D366617}"
+	ProjectSection(ProjectDependencies) = postProject
+		{878D15F0-1E45-4E1F-9D87-6933AE738434} = {878D15F0-1E45-4E1F-9D87-6933AE738434}
+		{E9A8896E-124E-454E-85E5-57EFD44F4D7A} = {E9A8896E-124E-454E-85E5-57EFD44F4D7A}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		DebugMD|x64 = DebugMD|x64
+		Release|x64 = Release|x64
+		ReleaseMD|x64 = ReleaseMD|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2E84EACE-007C-4D36-A20B-502F89A6803F}.Debug|x64.ActiveCfg = Debug|x64
+		{2E84EACE-007C-4D36-A20B-502F89A6803F}.Debug|x64.Build.0 = Debug|x64
+		{2E84EACE-007C-4D36-A20B-502F89A6803F}.DebugMD|x64.ActiveCfg = Debug|x64
+		{2E84EACE-007C-4D36-A20B-502F89A6803F}.DebugMD|x64.Build.0 = Debug|x64
+		{2E84EACE-007C-4D36-A20B-502F89A6803F}.Release|x64.ActiveCfg = Release|x64
+		{2E84EACE-007C-4D36-A20B-502F89A6803F}.Release|x64.Build.0 = Release|x64
+		{2E84EACE-007C-4D36-A20B-502F89A6803F}.ReleaseMD|x64.ActiveCfg = Release|x64
+		{2E84EACE-007C-4D36-A20B-502F89A6803F}.ReleaseMD|x64.Build.0 = Release|x64
+		{E9A8896E-124E-454E-85E5-57EFD44F4D7A}.Debug|x64.ActiveCfg = Debug|x64
+		{E9A8896E-124E-454E-85E5-57EFD44F4D7A}.Debug|x64.Build.0 = Debug|x64
+		{E9A8896E-124E-454E-85E5-57EFD44F4D7A}.DebugMD|x64.ActiveCfg = DebugMD|x64
+		{E9A8896E-124E-454E-85E5-57EFD44F4D7A}.DebugMD|x64.Build.0 = DebugMD|x64
+		{E9A8896E-124E-454E-85E5-57EFD44F4D7A}.Release|x64.ActiveCfg = Release|x64
+		{E9A8896E-124E-454E-85E5-57EFD44F4D7A}.Release|x64.Build.0 = Release|x64
+		{E9A8896E-124E-454E-85E5-57EFD44F4D7A}.ReleaseMD|x64.ActiveCfg = ReleaseMD|x64
+		{E9A8896E-124E-454E-85E5-57EFD44F4D7A}.ReleaseMD|x64.Build.0 = ReleaseMD|x64
+		{878D15F0-1E45-4E1F-9D87-6933AE738434}.Debug|x64.ActiveCfg = Debug|x64
+		{878D15F0-1E45-4E1F-9D87-6933AE738434}.Debug|x64.Build.0 = Debug|x64
+		{878D15F0-1E45-4E1F-9D87-6933AE738434}.DebugMD|x64.ActiveCfg = DebugMD|x64
+		{878D15F0-1E45-4E1F-9D87-6933AE738434}.DebugMD|x64.Build.0 = DebugMD|x64
+		{878D15F0-1E45-4E1F-9D87-6933AE738434}.Release|x64.ActiveCfg = Release|x64
+		{878D15F0-1E45-4E1F-9D87-6933AE738434}.Release|x64.Build.0 = Release|x64
+		{878D15F0-1E45-4E1F-9D87-6933AE738434}.ReleaseMD|x64.ActiveCfg = ReleaseMD|x64
+		{878D15F0-1E45-4E1F-9D87-6933AE738434}.ReleaseMD|x64.Build.0 = ReleaseMD|x64
+		{EE11ED1A-3A17-4961-A58C-F9168D366617}.Debug|x64.ActiveCfg = Debug|x64
+		{EE11ED1A-3A17-4961-A58C-F9168D366617}.Debug|x64.Build.0 = Debug|x64
+		{EE11ED1A-3A17-4961-A58C-F9168D366617}.DebugMD|x64.ActiveCfg = DebugMD|x64
+		{EE11ED1A-3A17-4961-A58C-F9168D366617}.DebugMD|x64.Build.0 = DebugMD|x64
+		{EE11ED1A-3A17-4961-A58C-F9168D366617}.Release|x64.ActiveCfg = Release|x64
+		{EE11ED1A-3A17-4961-A58C-F9168D366617}.Release|x64.Build.0 = Release|x64
+		{EE11ED1A-3A17-4961-A58C-F9168D366617}.ReleaseMD|x64.ActiveCfg = ReleaseMD|x64
+		{EE11ED1A-3A17-4961-A58C-F9168D366617}.ReleaseMD|x64.Build.0 = ReleaseMD|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D209BC79-C945-4E88-BC98-AC0674C9EDAC}
+	EndGlobalSection
+EndGlobal
