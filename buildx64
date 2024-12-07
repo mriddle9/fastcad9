@@ -1,0 +1,55 @@
+#!/bin/bash
+
+set -e
+function BUILD()
+{
+	echo "*****************************************";
+	pwd;
+	echo ""
+	chmod a+x build
+	./build
+}
+
+function BUILDIFEXISTS()
+{
+#ignore directory names that start with #
+X=$1
+if ! [[ ${X:0:1} == '#' ]]; then
+	pushd $1
+	if [ -d $2 ]; then
+		cd $2
+		BUILD
+	fi
+	popd
+fi
+}
+
+function NEXT()
+{
+	BUILDIFEXISTS $1 linux/debug64
+	BUILDIFEXISTS $1 linux/release64
+	BUILDIFEXISTS $1 linux/debugso64
+	BUILDIFEXISTS $1 linux/releaseso64
+	BUILDIFEXISTS $1 linux/MD64
+	BUILDIFEXISTS $1 linux/MDd64
+}
+
+if ! [ -z $1 ] ; then
+	NEXT $1
+else
+	if [ -f buildfiles ] ; then
+		while read F
+		do
+			if ! [ -z $F ] ; then
+				NEXT $F
+			fi
+		done <buildfiles
+	else
+		echo No buildfile found.
+		exit 1
+	fi
+fi
+
+echo "*****************************************";
+echo "*** Build successful."
+
