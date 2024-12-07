@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\source\CDlgAbout.cpp" />
+    <ClCompile Include="..\..\source\CMainCtrl.cpp" />
+    <ClCompile Include="..\..\source\fcw9.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\source\rscid.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\rsc\AboutDlg.png" />
+    <Image Include="..\..\rsc\fcw9.ico">
+      <Filter>resources</Filter>
+    </Image>
+    <Image Include="..\..\rsc\linen.png">
+      <Filter>resources</Filter>
+    </Image>
+    <Image Include="..\..\rsc\Mike.png">
+      <Filter>resources</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="resources">
+      <UniqueIdentifier>{ca4fc7dd-d92f-4de8-8e46-f90897a92ab6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\rsc\fcw9.mnu">
+      <Filter>resources</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="..\..\rsc\fcw9.rsc">
+      <Filter>resources</Filter>
+    </Resource>
+  </ItemGroup>
+</Project>
