@@ -9,4 +9,4 @@ wintest: $(LIBOBJS)
 	$(LIBOBJS) \
 	-L../../../../evtk4src/libs/linux/D64 -L. \
 	-lfwkc -lfwkw -lX11 -lXext -lXmu -lfreetype \
-	-lrt -lpthread -ldl -lc
+	-lcups -lrt -lpthread -ldl -lc

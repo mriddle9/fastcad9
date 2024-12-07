@@ -8,5 +8,5 @@ wintest: $(LIBOBJS)
 	g++ -o wintest -D_OS64 -D_SYS_LINUX -D_DEBUG -D_REENTRANT -D_USINGFWKSTATICLIB -traditional-cpp -m64 -g $(LIBOBJS) \
 		-L../../../../evtk4src/libs/linux/Sd64 \
 		-lfwkw -lfwkc -lfreetype -lpng -ltiff -ljpeg -lzlib -lX11 -lXext -lXmu \
-		-lrt -lpthread -ldl -lc
+		-lcups -lrt -lpthread -ldl -lc
 
