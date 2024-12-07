@@ -36,6 +36,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </Resource>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\docs\issues.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2E84EACE-007C-4D36-A20B-502F89A6803F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

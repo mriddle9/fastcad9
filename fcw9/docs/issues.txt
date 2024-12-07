@@ -1,0 +1,11 @@
+FCW9 Issues
+=============================================================
+12-7-24:
+Menus on Linux build do not stay open with top menu click
+(click on menu name, then another click on menu item)
+(Windows dos both two clicks and single click-drag-release)
+
+Linux build, starts ok from command linw with window shown 
+on W10 screen, but is fairly small title, menu bars)
+
+

@@ -24,6 +24,9 @@
     <Filter Include="resources">
       <UniqueIdentifier>{ca4fc7dd-d92f-4de8-8e46-f90897a92ab6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="docs">
+      <UniqueIdentifier>{dcae4351-d418-41f3-91f8-6a92ec09ee08}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\rsc\fcw9.mnu">
@@ -34,5 +37,10 @@
     <Resource Include="..\..\rsc\fcw9.rsc">
       <Filter>resources</Filter>
     </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\docs\issues.txt">
+      <Filter>docs</Filter>
+    </Text>
   </ItemGroup>
 </Project>
