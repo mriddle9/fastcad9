@@ -1,0 +1,19 @@
+# Number of threads
+NT=$1
+
+# Inferred executable filename
+EXECFN=`pwd`
+EXECFN=`echo $EXECFN | rev | cut -d'/' -f-3 | rev | cut -d'/' -f-1`
+
+# Remove all unnecessary files
+rm *$EXECFN
+rm *.o
+rm *.a
+rm *~
+
+# Check for threading
+if [ -n "$NT" ]; then
+    make -j$NT
+else
+    make
+fi

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        p{color: black; font-size:130%;}
+    </style>
+</head>
+<body>
+    Last updated December 31, 2023
+    <hr />
+    <h2>About WinTest</h2>
+
+    <p>
+        WinTest is a program that I'm using to explore the basic UI design issues for a next generation
+        program.
+    </p>
+
+    <p>
+        It is an alpha-transparency window based application with its own title bar that allows window
+        drag and drop by dragging the title bar text area, provides the usual title bar icon behavior,
+        and supports all edge and corner drag resizing and repositioning.
+    </p>
+
+    <p>
+        The purpose for this is to allow more flexibility in the title bar appearance, and the ability to make use
+        of title bar space for additional controls or information display.
+    </p>
+    <hr />
+
+    <h2>Testing Different Renderers</h2>
+
+    <p>
+        By commenting all but a chosen wstyle value in the CApplication constructor, it is possible to
+        test a variety of renderers, including GDI+ and DX2D, as well as other options with the CIDraw
+        software renderer which supports the WSTYLE_ALPHA work described above, and to attempt to make
+        code that works in all cases, so this could be a user option.
+    </p>
+    <p>
+        The GDI+ and DX2d renderers support proper Arabic joiners in text. All renderers now properly
+        support Bi-Directional mixed text, and the saple text page display shows this.
+    </p>
+    <hr />
+
+    <h2>Printer Support</h2>
+    <p>
+        The displayed text page displays current system printer information. Menu options for printing tests
+        have been copied from the evtk3apps::printtest app to provide early access to printing, so that print 
+	fucnctionality can be tested as the program develops, rather than being bolted on later.
+    </p>
+
+    <p>
+	These tests verify that text can be printed, and that bidirectional mixed mode text can be printed if a 
+	font that supports Unicode text is selected. Additionaly, sample code prints a page of graphics correctly.
+    </p>
+    <hr />
+
+    <h2>HTML Help</h2>
+    <p>
+        By providing HTML help from the start, the help system can be developed in parallel
+        with the code, so that details do not get lost.
+    </p>
+    <hr />
+
+</body>
+</html>

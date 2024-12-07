@@ -1,0 +1,5 @@
+LIBOBJS = \
+	CApplication.o \
+	CCustomCtl.o \
+
+

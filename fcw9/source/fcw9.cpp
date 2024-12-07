@@ -244,8 +244,24 @@ void* CApplication::OnMenuScript(MSGP)
 		break;
 
 	case 4:	// HELP
-		break;
+	{
+		//  get desired path to help file
+		IStr* hHelpFile = MakeStr(hApplication->AppDataDirPath());
+		hHelpFile->StrAppendW(TEXT("FCW9.html"));
 
+		//  save help text to app data dir
+		wchar_t* pHelpText = RscTextFile(RSC_HelpFile);
+		IStr* hHelpText = MakeStr(pHelpText);
+		hHelpText->StrSaveFile(hHelpFile->StrTextPtr());
+
+		//  ask OS to open it as a document (it is an .html file)
+		hWinMgr->WMgrShellOpenDoc(hHelpFile->StrTextPtr());
+
+		// cleanup
+		hHelpFile->Release();
+		hHelpText->Release();
+		break;
+	}
 	default:
 		//	bad command
 		break;

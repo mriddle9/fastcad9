@@ -1,0 +1,22 @@
+10 wintest main window menubar
+
+1,-1,1,Main,main,
+1,-2,0,File,file.ico,
+1,-3,0,Help,help.ico,
+1,-4,0,Printing,prnt.ico,
+
+2,-1,1,Main...,main,
+2,2,0,Open,open.bmp,OPEN;
+2,2,0,Close,close.bmp,CLOSE;
+2,2,0,Exit,exit.png,EXIT;
+
+3,-1,1,Main...,main,
+3,3,0,About,about.bmp,ABOUT;
+3,3,0,Help,help.png,HELP;
+
+4,-1,1,Main...,main,
+4,4,0,Print Text,print.bmp,PRINTSTG;
+4,4,0,Print Multipage Text,print.bmp,PRINTMPSTG;
+4,4,0,Print Unicode Text,print.bmp,PRINTUCSTG;
+4,4,0,Print Graphics,print.png,PRINTGRAPHICS;
+4,4,0,Print Dialog,print.png,PRINTDLG;

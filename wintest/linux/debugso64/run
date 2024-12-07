@@ -1,0 +1,1 @@
+LD_LIBRARY_PATH=../../../../evtk4src/libs/linux/Dd64 ./wintest

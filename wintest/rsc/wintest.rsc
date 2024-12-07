@@ -1,25 +1,23 @@
-XPID 0x7000 // fcw9 main program Resources
+XPID 0x7000 // wintest main program Resources
 
 //	text strings
 
-*1,SimpleApp 
-//	User name for about dialog
+*1,wintest
 *2,Mike 
 
 //	images
 
-IMAGE 200,"linen.png"
-IMAGE 201,"AboutDlg.png"
-IMAGE 202,"Arabic.png"
+IMAGE 200,"AboutDlg.png"
+IMAGE 201,"Arabic.png"
 
-//	text files
+//	text file resources
 
-TEXTFILE 300,"fcw9.html"
+TEXTFILE 300,"wintest.html"
 
 // dialogs
 
 MLTEXT 100
-DIALOG,800,490,230,"About FastCAD v9",MODAL
+DIALOG,800,490,230,"About Wintest",MODAL
 {
 IMAGE,500,PARENT,40,34,64,64,"AboutDlg.png",ROUNDED
 LABEL,510,PARENT,150,10,-10,24,"Program (c)2012-2024 Evolution Computing Inc.",NONE

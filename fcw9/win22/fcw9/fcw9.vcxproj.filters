@@ -32,6 +32,9 @@
     <None Include="..\..\rsc\fcw9.mnu">
       <Filter>resources</Filter>
     </None>
+    <None Include="..\..\rsc\fcw9.html">
+      <Filter>resources</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="..\..\rsc\fcw9.rsc">

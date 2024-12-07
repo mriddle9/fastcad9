@@ -1,0 +1,144 @@
+//	==========================================================================
+//	mandelfn.cpp - Thread function for mandel evaluation
+//	This version uses the std::threads library
+//	--------------------------------------------------------------------------
+//  Copyright ©2021 Pattern Computer Inc.. All rights reserved.
+//	==========================================================================
+
+#include "fwkc.h"
+#include "mandelfn.h"
+
+//	==========================================================================
+//	Thread Work: Generate one raster line of mandelbrot set
+//	==========================================================================
+
+//	pallete is 0xAABBGGRR - in memory: RR, GG, BB, AA
+//	This matches the Win32 API color standard
+struct RGBA
+{
+	UINT8	r;
+	UINT8	g;
+	UINT8	b;
+	UINT8	a;
+};
+
+//	video cards are usually 0xAARRGGBB: in memory BB, GG, RR, AA
+struct BGRA
+{
+	UINT8	b;
+	UINT8	g;
+	UINT8	r;
+	UINT8	a;
+};
+
+struct CURLINE
+{
+	uint32_t*	pLine;
+	uint64_t	npixels;
+	double		deltax;
+	double		scanx;
+	double		scany;
+};
+
+//	in standard threading, the thread ends when the thread function exits, so
+//	we want multiple line generation to occur within the single call to the thread
+//	function, and we want the dispatch to occur within it so that we do not waste
+//	cycles on joins to wait on other threads except at the end of image generation.
+
+void ThreadGenLine(MVIEW* pMView)
+{
+	CURLINE	curline;
+
+	//	loop until no more lines need be evaluated then return
+	while (true)
+	{
+//	--------------------------------------------------------------------------
+		//	setup next needed mandel line for evaluation
+		//	this is shared and must be protected for sole access with a mutex
+
+		//	block until lock is available
+		pMView->viewlock.lock();
+
+		//	have we dispached all necessary work?
+		if (pMView->nexty >= (pMView->nPixHeight))
+		{
+			pMView->viewlock.unlock();
+			return;
+		}
+
+		//	specify next line needing generation
+		curline.pLine = pMView->hImage->ImgPixelAdr(0, pMView->nexty++);
+		curline.scany = pMView->starty;
+		pMView->starty += pMView->deltay;
+		curline.scanx = pMView->startx;
+		curline.deltax = pMView->deltax;
+		curline.npixels = pMView->nPixWidth;
+
+		//	end shared access need for mutex - only reference curline values
+		//	past this point
+		pMView->viewlock.unlock();
+//	--------------------------------------------------------------------------
+
+		//	evaluate the current needed mandel image raster line
+
+		//	if deltax exponent is < startx exponent - 15, the
+		//	image will draw all black: we lack mantissa resolution
+		//	to zoom this far in.
+
+		double x = curline.scanx;
+		double y = curline.scany;
+		double nx, wx, wy;
+		uint32_t nColor;
+
+		//	set all pixels of one raster line
+		for (uint32_t ix = 0; ix < curline.npixels; ix++)
+		{
+			//	calculate the pixel depth
+			//	+1 is to ensure outside is a dark color
+			//	as resolution values are usually power of 2
+			int32_t depth = pMView->nResolution + 1;
+			wx = x;
+			wy = y;
+			while (depth--)
+			{
+				if ((wx * wx + wy * wy) > 4.0)
+					break;
+				nx = wx * wx - wy * wy + x;
+				wy = 2.0 * wx * wy + y;
+				wx = nx;
+			}
+			depth = depth % 208;
+			if (depth < 0)
+				depth = 0;
+
+			//	map depth to color
+			switch (pMView->nPalette)
+			{
+			case 0: nColor = pMView->pPAL[(depth & 31) + 32]; // browns and blues
+				break;
+			case 1: nColor = pMView->pPAL[depth + 32]; // lavender
+				break;
+			case 2: nColor = pMView->pPAL[depth]; // orange red
+				break;
+			case 3: nColor = pMView->pPAL[depth & 15]; // circus - the 60s
+				break;
+			case 4: nColor = pMView->pPAL[(depth & 63) + 64]; // yellows and greens
+				break;
+			case 5: nColor = pMView->pPAL[(depth & 15) + 64]; // icy blue
+				break;
+			}
+			x += curline.deltax;
+
+			//	draw pixel, with color reversal from palette to image video buffer
+			RGBA* pSrc = (RGBA*)&nColor;
+			BGRA* pDest = (BGRA*)curline.pLine;
+			pDest->r = pSrc->r;
+			pDest->g = pSrc->g;
+			pDest->b = pSrc->b;
+			pDest->a = pSrc->a;
+			curline.pLine++;
+		}
+	}
+}
+
+//	==========================================================================

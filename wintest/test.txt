@@ -1,0 +1,44 @@
+//	==========================================================================
+//	mandelfn.h - Thread function for mandel evaluation
+//	This version uses the std::threads library
+//	--------------------------------------------------------------------------
+//  Copyright ©2021 Pattern Computer Inc.. All rights reserved.
+//	==========================================================================
+
+#include "fwkc.h"
+#include <thread>
+#include <mutex>
+
+#define MAX_THREADS 64 
+
+struct MVIEW
+{
+	//	specified view pView parameters (must be first to match init)
+	double		vcenx;
+	double		vceny;
+	double		vwidth;
+	double		vheight;
+
+	//	drawing parameters
+	IImage*		hImage;
+	double		startx;
+	double		deltax;
+	double		starty;
+	double		deltay;
+	uint64_t	nPixWidth;
+	uint64_t	nPixHeight;
+	uint64_t	nexty;
+	uint32_t*	pPAL;
+
+	//	user-specified parameters
+	uint32_t	nView;
+	uint32_t	nPalette;
+	uint32_t	nThreads;
+	uint32_t	nResolution;
+
+	std::mutex	viewlock;
+};
+
+void ThreadGenLine(MVIEW* pMView);
+
+//	==========================================================================
