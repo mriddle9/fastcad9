@@ -6,7 +6,7 @@ include ../libobjs
 
 fcw9: $(LIBOBJS)
 	g++ -o fcw9 -D_OS64 -D_SYS_LINUX -D_DEBUG -D_REENTRANT -D_USINGFWKSTATICLIB -traditional-cpp -m64 -g $(LIBOBJS) \
-		-L../../../../evt3src/libs/linux/Sd64 \
+		-L../../../../evtk3src/libs/linux/Sd64 \
 		-lfwkw -lfwkc -lcups -lfreetype -lpng -ltiff -ljpeg -lzlib -lX11 -lXext -lXmu \
 		-lrt -lpthread -ldl -lc
 
