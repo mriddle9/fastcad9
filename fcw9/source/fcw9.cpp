@@ -30,7 +30,7 @@ public:
 	void* OnMenuScript(MSGP);
 public:
 	IWindow*	hWindow;
-	IControl*	hMainCtrl;
+	ICtlTabPages* hTabPages;
 
 	DRECTF		drect;
 	int			nOpenDocWindows;
@@ -59,15 +59,32 @@ CApplication::CApplication(void)
 {
 	pApplication = (IMObject*)this;
 	hWindow = NULL;
-		winStyle = WSTYLE_BKTITLED | WSTYLE_DPISCALESIZE | WSTYLE_DPISCALEORG;
-	//	winStyle = WSTYLE_BKTITLED;
+
+#ifndef _SYS_MSWIN
+	winStyle = WSTYLE_BKTITLED | WSTYLE_DPISCALESIZE | WSTYLE_DPISCALEORG;
+#else
+	//	winStyle = WSTYLE_ALPHA;
+	//	winStyle = WSTYLE_BKTITLED | WSTYLE_DPISCALESIZE | WSTYLE_DPISCALEORG;
+		winStyle = WSTYLE_BKTITLED;
 	//	winStyle = WSTYLE_TITLED | WSTYLE_DX2DIDRAW;
 	//	winStyle = WSTYLE_BKTITLED | WSTYLE_GDIPIDRAW;
+#endif
 
 	//	DX2DIDRAW: no gradient fills, no justified text
-	//             loses pRasterTarget when printer ops, need to recreate it
+	//      loses pRasterTarget when printer ops, need to recreate it
 	//	GDIPIDRAW: no gradient fill
 	//	CIDraw: no arabic joiners, limited RTL text support
+	//		(if any - code might have workaround)
+
+	//	With winstyle alpha, there is no:
+	//		Title bar
+	//		Title bar icons: sysmenu, win title, minimize, maximize, close
+	//		Window edges do not grow/shrink
+	//		No title bar drag
+	//		So we add our own title bar, outline resize,title bar icons,
+	//		titlebar drag - see wintest for code for this
+	//		if we add this, how do we make it linux compatible?
+	//		It does enable full-window transparency when dragging
 
 	hWinMgr->WMgrSetDPIScale(1.25);
 	nOpenDocWindows = 0;
@@ -153,23 +170,33 @@ void* CApplication::OnOpenFirstDocument(void)
 	//	load menu file
 	((IMenuMgr*)hMenuMgr)->MenuLoadFile(TEXT("#rsc/fcw9.mnu"));
 
-	//	create menu bar
-	hMenuBar = MakeMenuBar(hWindow, 1, 10);
-	((IControl*)hMenuBar)->CtlGradientFill(GF_T2B,0xFF908070,0xFF403020);
-	((IControl*)hMenuBar)->CtlSetTextColor(COLOR_WHITE);
-	((IControl*)hMenuBar)->CtlSetBkgndColor(0xFF605040);
-	((IControl*)hMenuBar)->CtlSetFrameType(NOOUTLINE);
+	//	create tabbed page controller
+	CTLLOCN TPLocn = { CLT_ALL,0,0,0,0 };
+	hTabPages = MakeCtlTabPages(hWindow, &TPLocn, 400);
+	hTabPages->CtlSetNotify(this);
+	hTabPages->CtlSetBkgndColor(0xFF605040); // COLOR_LTBLUE); // unused space on hz bar
+	hTabPages->CtlTabDetached(); // tab not attached to body (draw crect)
 
-	//	create our custom container control
-	CTLLOCN CtlLocn = {CLT_ALL,0,0,0,0};
-	hMainCtrl = MakeMainCtrl(hWindow, &CtlLocn);
+	//	create our details display control
+	ICtlTabPage* hTabPage1 = MakeTabPage(hTabPages);
+	CTLLOCN CtlLocn = { CLT_ALL,0,0,0,0 };
+	IControl* hMainCtrl1 = MakeMainCtrl(hTabPage1, &CtlLocn);
+	hTabPage1->CtlSetTabView(hMainCtrl1);
+
+	//	create another details display control
+	ICtlTabPage* hTabPage2 = MakeTabPage(hTabPages);
+	IControl* hMainCtrl2 = MakeMainCtrl(hTabPage2, &CtlLocn);
+	hTabPage2->CtlSetTabView(hMainCtrl2);
+
+	// make it currently selected
+	hTabPages->CtlPageSelect(hTabPage1);
 
 	//  notify window all controls have been allocated
 	//  this will trigger the initial load and draw sequence
 	hWindow->WinCtlsChanged();
 
 	//	set initial focus to our control
-	hWinMgr->WMgrChangeFocus(hMainCtrl);
+	hWinMgr->WMgrChangeFocus(hMainCtrl1);
 
 	return IM_RTN_NOTHING;
 }

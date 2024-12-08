@@ -17,6 +17,7 @@ extern int	nRscBase;
 #define RSC_LinenBkgnd				nRscBase+200
 #define RSCIMG_AboutImage			nRscBase+201
 #define RSCIMG_Arabic				nRscBase+202
+#define RSCIMG_Hebrew				nRscBase+203
 
 #define RSC_HelpFile				nRscBase+300
 

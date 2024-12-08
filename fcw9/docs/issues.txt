@@ -1,11 +1,19 @@
 FCW9 Issues
-=============================================================
+========================================================================
 12-7-24:
 Menus on Linux build do not stay open with top menu click
 (click on menu name, then another click on menu item)
 (Windows dos both two clicks and single click-drag-release)
 
-Linux build, starts ok from command linw with window shown 
+Linux build, starts ok from WSL command line with window shown 
 on W10 screen, but is fairly small title, menu bars)
 
+wintest: linux builds crash if try to print (uses cups) on WSL.
+Test on desktop linux to see if it works there
 
+wintest: won't build debugso64, releaseso64. Need to figure
+out how these should work. evtk4src is not building D64 nor Dd64 libs.
+
+We know we will want plug-ins, so probably should make DLL builds from 
+start, but all of the core should be MD not D libs, so no DLLs needed, 
+unless to support 3rd party DLL-required libs.

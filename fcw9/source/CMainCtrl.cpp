@@ -8,6 +8,8 @@
 #include "fwkw.h"
 #include "rscid.h"
 
+DLLEXPORT IDialog* MakeDlgAbout(void);
+
 //	======================================================================
 //	Class definition
 //	======================================================================
@@ -21,11 +23,10 @@ public:
 	void* OnKey(MSGP);
 	void* OnDraw(MSGP);
 	void* OnMouseEvent(MSGP);
+	void* OnMenuScript(MSGP);
 public:
-//	IImage*		hPortrait;
-//	IStr*		hPortraitName;
-//	uint32_t	nNowFramed;
-//	RECT		frame[32];
+	IStr*		hTabTitle;
+	TABPAGEDATA	PageData;
 };
 
 //	======================================================================
@@ -47,9 +48,15 @@ CMainCtrl::CMainCtrl(IControl* hparent, CTLLOCN* pLocn)
 	:CControl(hparent, (CTLLOCN*)pLocn,0)
 {
 	nBkgndColor = COLOR_LTBLUE;
-//	hPortrait = MakeImage(TEXT("%LogicalPgmPath/rsc/Mike.png"));
-//	hPortraitName = MakeStr(TEXT("Mike"));
-//	nNowFramed = 0;
+	hTabTitle = MakeStr("Status");
+	PageData.pTitleText = hTabTitle->StrTextPtr();
+	PageData.nSelTabTextColor = COLOR_BLUE;   // tab text color
+	PageData.nSelTabBkgnd = COLOR_WHITE; // tab background color
+	PageData.nNSTabTextColor = COLOR_WHITE;   // tab text color
+	PageData.nNSTabBkgnd = 0xFFA08060; // tab background color
+
+	((CControl*)this)->nTextColor = COLOR_WHITE;
+	((CControl*)this)->nBkgndColor = COLOR_BLACK;
 }
 
 //	======================================================================
@@ -58,8 +65,6 @@ CMainCtrl::CMainCtrl(IControl* hparent, CTLLOCN* pLocn)
 
 CMainCtrl::~CMainCtrl(void)
 {
-//	if(hPortrait)
-//		hPortrait->Release();
 }
 
 //	======================================================================
@@ -75,9 +80,42 @@ void* CMainCtrl::Msg(MSGDISPATCH)
 	case MSG_CtlDraw:			return OnDraw(MPPTR);
 	case MSG_CtlMouseEvent:		return OnMouseEvent(MPPTR);
 	case MSG_CtlNotifyKeyDown:	return OnKey(MPPTR);
+
+	case MSG_CtlGetPageData:  return MRTNVAL(&PageData);
+
+	case MSG_ScriptLine:
+	case MSG_ScriptText:		return OnMenuScript(MPPTR);
+
 	default:
 		return MSGFWDBASE(CControl,MSGID);
 	};
+}
+
+//	======================================================================
+//	Process command string from a menu item pick
+//	======================================================================
+
+static wchar_t szCmdList[] = L"EXIT;\0QUIT;\0ABOUT;\0HELP;\0\0";
+
+void* CMainCtrl::OnMenuScript(MSGP)
+{
+	MPARMPTR(wchar_t*, pCmd);
+
+	//	process command string - note ; delimiter
+	uint32_t nCmd = (uint32_t)hSvc->SvcListFindStrNr(szCmdList, pCmd);
+	switch (nCmd)
+	{
+	case 3:	// ABOUT
+		MakeDlgAbout();
+		break;
+	}
+
+	//	forward back for main program menu handling
+	//	note cmd must still have ; delimiter for this to work
+	IMObject* hOldTarget = hScriptMgr->ScriptTarget(hApplication);
+	hScriptMgr->ScriptText(pCmd);
+	hScriptMgr->ScriptTarget(hOldTarget);
+	return IM_RTN_NOTHING;
 }
 
 //	======================================================================
@@ -86,10 +124,10 @@ void* CMainCtrl::Msg(MSGDISPATCH)
 
 //	bidirectional body text containing some Hebrew Unicode
 //	type "nzk yuc" to enter mazel tov using hebrew keyboard IME
-wchar_t szBiDiText[] = L"Arabic joiners missing from CIDraw, ok in GDI+ and DX2d:\n"
-L"Say \x05de\x05d6\x05dc \x05d8\x05d5\x05d1 and smile.\n"
-L" Arabic \x064A\x064F\x0633\x0627\x0648\x0650\x064a text.\n"
-L"\nCorrect Hebrew display is: Say \x05de \x05d6 \x05dc \x05d8 \x05d5 \x05d1 and smile.\n";
+wchar_t szBiDiText[] = L"Arabic joiners missing from CIDraw, ok in GDI+ and DX2d.\n"
+L"CIDraw does not do right->left reversal.\n"
+L"Say \x05de\x05d6\x05dc \x05d8\x05d5\x05d1 and smile. first in memory: \x05de \n"
+L"Arabic \x064A\x064F\x0633\x0627\x0648\x0650\x064a text: \x064A  \x064F  \x0633  \x0627  \x0648  \x0650  \x064a\n";
 //  Correct Hebrew display is: Say מזל טוב and smile.
 //  OSX NDrawMacText.h and iOS NDrawiOSText.h display mixed text correctly
 
@@ -118,7 +156,7 @@ void* CMainCtrl::OnDraw(MSGP)
 	//	as a part of refreshing the CWindow to the screen
 
 	//	fill our control with BLACK
-	hIDraw->IDrawSetFColor(COLOR_BLACK);
+	hIDraw->IDrawSetFColor(nBkgndColor);
 	hIDraw->IDrawSetLColor(COLOR_TRANSPARENT);
 	hIDraw->IDrawRectP(&CRect);
 
@@ -130,6 +168,14 @@ void* CMainCtrl::OnDraw(MSGP)
 
 //	----------------------------------------------------------------------
 
+	//	nPage
+	IStr* hTemp = MakeStr();
+	hTemp->StrFmtInt(PageData.nItem);
+	hIDraw->IDrawSetTColor(nTextColor);
+	hIDraw->IDrawSetFont(NULL, nFontSize, 0.0);
+	hIDraw->IDrawTextAt(hTemp->Text(), CRect.left + 10, CRect.top + 23);
+	hTemp ->Release();
+
 	//	show current time and date
 	TIME now;
 	IStr* hTimeText = MakeStr();
@@ -138,33 +184,38 @@ void* CMainCtrl::OnDraw(MSGP)
 	//	this converts UTC to Local Time before formatting:
 	hSvc->SvcStrDateTime(hTimeText,&now,0);
 
-	hIDraw->IDrawSetTColor(COLOR_WHITE);
+	hIDraw->IDrawSetTColor(nTextColor);
 	hIDraw->IDrawSetFont(NULL,16.0,0.0);
-	hIDraw->IDrawTextAt(hTimeText->StrTextPtr(),CRect.left+10,CRect.top+23);
+	hIDraw->IDrawTextAt(hTimeText->StrTextPtr(),CRect.left+10,CRect.top+43);
 	hTimeText->Release();
 
 //	----------------------------------------------------------------------
 
 	//	Type of IDraw in use
 	wchar_t* pText = hIDraw->IDrawId();
-	hIDraw->IDrawTextAt(L"IDraw type:", CRect.left + 10, CRect.top + 50);
-	hIDraw->IDrawTextAt(pText, CRect.left + 100, CRect.top + 50);
+	hIDraw->IDrawTextAt(L"IDraw type:", CRect.left + 10, CRect.top + 63);
+	hIDraw->IDrawTextAt(pText, CRect.left + 100, CRect.top + 63);
 
 //	----------------------------------------------------------------------
 
 	//	set text font, height, bearing and color
 	hIDraw->IDrawSetFont(nullptr, 20.0, 0.0);
-	hIDraw->IDrawSetTColor(COLOR_WHITE);
+	hIDraw->IDrawSetTColor(nTextColor);
 	hIDraw->IDrawSetFColor(COLOR_TRANSPARENT);
 
 	//	draw some bidirectional text (Arial.ttf has hebrew charset)
-	DRECTF trect2 = { {50,150},{900,400} };
+	DRECTF trect2 = { {50,180},{900,400} };
 	hIDraw->IDrawText(szBiDiText, &trect2);
 
+	//	draw an image of correctly rendered Hebrew text
+	hIDraw->IDrawTextAt(L"Correct Hebrew display is: ", 50, 330);
+	IImage* hHebrew = RscImage(RSCIMG_Hebrew);
+	hIDraw->IDrawImageAt(hHebrew, 290, 304, 1.0, false);
+
 	//	draw an image of correctly rendered Arabic text
-	hIDraw->IDrawTextAt(L"Correct Arabic display is: ", 50, 350);
+	hIDraw->IDrawTextAt(L"Correct Arabic display is: ", 50, 380);
 	IImage* hArabic = RscImage(RSCIMG_Arabic);
-	hIDraw->IDrawImageAt(hArabic, 290, 324, 1.0, false);
+	hIDraw->IDrawImageAt(hArabic, 290, 354, 1.0, false);
 
 //	----------------------------------------------------------------------
 
@@ -178,9 +229,9 @@ void* CMainCtrl::OnDraw(MSGP)
 	//	get printer information
 	wchar_t szInfo[] =
 		L"HiDPI scale = %1\n"
-		L"Default printer = \n %2\n"
-		L"Selected printer = \n  %3\n"
-		L"width = %4, height = %5\n"
+		L"Default printer =  %2\n"
+		L"Selected printer =   %3\n"
+		L"width = %4, height = %5"
 		L"Xppi = %6, Yppi = %7"
 		L"\0";
 
@@ -204,11 +255,12 @@ void* CMainCtrl::OnDraw(MSGP)
 		pPrInfo->xppi, pPrInfo->yppi);
 
 	//	report print info
+	nFontSize = 18;
 	hIDraw->IDrawSetFont(nullptr, 18.0, 0.0);
-	hIDraw->IDrawSetTColor(COLOR_WHITE);
+	hIDraw->IDrawSetTColor(nTextColor);
 	hIDraw->IDrawSetFColor(COLOR_TRANSPARENT);
 
-	DRECTF trect3 = { {50,400},{600,500} };
+	DRECTF trect3 = { {50,460},{600,600} };
 	hIDraw->IDrawText(hSzScale->StrTextPtr(), &trect3);
 
 //	----------------------------------------------------------------------

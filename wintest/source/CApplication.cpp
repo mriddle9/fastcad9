@@ -69,21 +69,30 @@ IApplication* MakeApplication(void)
 //		Title bar icons: sysmenu, win title, minimize, maximize, close
 //		Window edges do not grow/shrink
 //		No title bar drag
+//	So we add our own title bar, outline resize,title bar icons tb drag
 //	======================================================================
 
 CApplication::CApplication(void)
 {
 	pApplication = (IMObject*)this;
 	hWindow = NULL;
-	//  winStyle = WSTYLE_ALPHA;
-		winStyle = WSTYLE_BKTITLED;
+
+#ifndef _SYS_MSWIN
+	winStyle = WSTYLE_BKTITLED | WSTYLE_DPISCALESIZE | WSTYLE_DPISCALEORG;
+#else
+	winStyle = WSTYLE_ALPHA;
 	//	winStyle = WSTYLE_BKTITLED | WSTYLE_DPISCALESIZE | WSTYLE_DPISCALEORG;
+	//	winStyle = WSTYLE_BKTITLED;
 	//	winStyle = WSTYLE_TITLED | WSTYLE_DX2DIDRAW;
 	//	winStyle = WSTYLE_BKTITLED | WSTYLE_GDIPIDRAW;
+#endif
+
 	//	DX2DIDRAW: no gradient fills, no justified text
-	//             loses pRasterTarget when printer ops, need to recreate it
+	//      loses pRasterTarget when printer ops, need to recreate it
 	//	GDIPIDRAW: no gradient fill
 	//	CIDraw: no arabic joiners, limited RTL text support
+	//		(if any - code might have workaround)
+
 	nOpenDocWindows = 0;
 }
 

@@ -11,6 +11,7 @@ XPID 0x7000 // fcw9 main program Resources
 IMAGE 200,"linen.png"
 IMAGE 201,"AboutDlg.png"
 IMAGE 202,"Arabic.png"
+IMAGE 203,"Hebrew.png"
 
 //	text files
 
