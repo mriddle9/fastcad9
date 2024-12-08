@@ -1,5 +1,6 @@
 LIBOBJS = \
 	CApplication.o \
-	CCustomCtl.o \
-
-
+	CCtlContent.o \
+	CCtlMainFrame.o \
+	CCtlTitleBar.o \
+	CDlgAbout.o \
