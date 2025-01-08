@@ -6,9 +6,13 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fcw9", "fcw9.vcxproj", "{2E84EACE-007C-4D36-A20B-502F89A6803F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{878D15F0-1E45-4E1F-9D87-6933AE738434} = {878D15F0-1E45-4E1F-9D87-6933AE738434}
+		{E9A8896E-124E-454E-85E5-57EFD44F4D7A} = {E9A8896E-124E-454E-85E5-57EFD44F4D7A}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fwkw", "..\..\..\..\evtk4src\fwkw\win22\fwkw\fwkw.vcxproj", "{878D15F0-1E45-4E1F-9D87-6933AE738434}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E9A8896E-124E-454E-85E5-57EFD44F4D7A} = {E9A8896E-124E-454E-85E5-57EFD44F4D7A}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fwkc", "..\..\..\..\evtk4src\fwkc\win22\fwkc\fwkc.vcxproj", "{E9A8896E-124E-454E-85E5-57EFD44F4D7A}"
 EndProject

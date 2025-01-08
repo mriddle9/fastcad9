@@ -15,6 +15,8 @@ wchar_t szDocumentsEx[] = L"/FastCAD9";
 #define _SPECIFIEDEXPATHS
 #include "winmain.h"
 
+#define NOMENU 0
+
 class CApplication : public IMObject
 {
 public:
@@ -29,17 +31,22 @@ public:
 	void* OnStartShutdown(void);
 	void* OnMenuScript(MSGP);
 public:
+	void ToggleIDraw(bool fSetupOnly);
+public:
 	IWindow*	hWindow;
 	ICtlTabPages* hTabPages;
 
 	DRECTF		drect;
 	int			nOpenDocWindows;
 	uint32_t	winStyle;
+
+	uint32_t	 nMenuId;
+	uint32_t	ixIDraw;
 };
 
 //	referenced externals
 
-IControl* MakeMainCtrl(IControl* hParent, CTLLOCN* pLocn);
+IControl* MakeMainCtrl(IControl* hParent, CTLLOCN* pLocn,wchar_t* pTTip);
 DLLEXPORT IDialog* MakeDlgAbout(void);
 
 //	======================================================================
@@ -59,32 +66,8 @@ CApplication::CApplication(void)
 {
 	pApplication = (IMObject*)this;
 	hWindow = NULL;
-
-#ifndef _SYS_MSWIN
-	winStyle = WSTYLE_BKTITLED | WSTYLE_DPISCALESIZE | WSTYLE_DPISCALEORG;
-#else
-	//	winStyle = WSTYLE_ALPHA;
-	//	winStyle = WSTYLE_BKTITLED | WSTYLE_DPISCALESIZE | WSTYLE_DPISCALEORG;
-		winStyle = WSTYLE_BKTITLED;
-	//	winStyle = WSTYLE_TITLED | WSTYLE_DX2DIDRAW;
-	//	winStyle = WSTYLE_BKTITLED | WSTYLE_GDIPIDRAW;
-#endif
-
-	//	DX2DIDRAW: no gradient fills, no justified text
-	//      loses pRasterTarget when printer ops, need to recreate it
-	//	GDIPIDRAW: no gradient fill
-	//	CIDraw: no arabic joiners, limited RTL text support
-	//		(if any - code might have workaround)
-
-	//	With winstyle alpha, there is no:
-	//		Title bar
-	//		Title bar icons: sysmenu, win title, minimize, maximize, close
-	//		Window edges do not grow/shrink
-	//		No title bar drag
-	//		So we add our own title bar, outline resize,title bar icons,
-	//		titlebar drag - see wintest for code for this
-	//		if we add this, how do we make it linux compatible?
-	//		It does enable full-window transparency when dragging
+	ixIDraw = 0;
+	nMenuId = 10;
 
 	hWinMgr->WMgrSetDPIScale(1.25);
 	nOpenDocWindows = 0;
@@ -142,6 +125,8 @@ void* CApplication::OnOpenFirstDocument(void)
 	//	load default resources for windowing
 	LoadDefaultResources();
 
+	ToggleIDraw(true); // setup wstyle only
+
 	//	reload session settings to allow pAppDataEx to be processed
 	hSession->SsnLoadData();
 
@@ -170,6 +155,13 @@ void* CApplication::OnOpenFirstDocument(void)
 	//	load menu file
 	((IMenuMgr*)hMenuMgr)->MenuLoadFile(TEXT("#rsc/fcw9.mnu"));
 
+	//	create main program menu - displayed above the tab pages control
+	IControl* hMenu = MakeMenuBar(hWindow, 1,nMenuId);
+	((IControl*)hMenu)->CtlGradientFill(GF_T2B, 0xFF908070, 0xFF403020);
+	((IControl*)hMenu)->CtlSetTextColor(COLOR_WHITE);
+	((IControl*)hMenu)->CtlSetBkgndColor(0xFF605040);
+	((IControl*)hMenu)->CtlSetFrameType(NOOUTLINE);
+
 	//	create tabbed page controller
 	CTLLOCN TPLocn = { CLT_ALL,0,0,0,0 };
 	hTabPages = MakeCtlTabPages(hWindow, &TPLocn, 400);
@@ -177,15 +169,18 @@ void* CApplication::OnOpenFirstDocument(void)
 	hTabPages->CtlSetBkgndColor(0xFF605040); // COLOR_LTBLUE); // unused space on hz bar
 	hTabPages->CtlTabDetached(); // tab not attached to body (draw crect)
 
-	//	create our details display control
-	ICtlTabPage* hTabPage1 = MakeTabPage(hTabPages);
+	//	create our details display control (Status) in a Tab Page container
+	//	by specifying nMenuId here, each tab page has its own menu, below the tab pages control
+	ICtlTabPage* hTabPage1 = MakeTabPage(hTabPages, NOMENU);
 	CTLLOCN CtlLocn = { CLT_ALL,0,0,0,0 };
-	IControl* hMainCtrl1 = MakeMainCtrl(hTabPage1, &CtlLocn);
+	IControl* hMainCtrl1 = MakeMainCtrl(hTabPage1, &CtlLocn,L"Main content page 1");
+	hSystem->SysSleep(1); // needed to prevent race condition in release build (TODO: why?)
 	hTabPage1->CtlSetTabView(hMainCtrl1);
 
 	//	create another details display control
-	ICtlTabPage* hTabPage2 = MakeTabPage(hTabPages);
-	IControl* hMainCtrl2 = MakeMainCtrl(hTabPage2, &CtlLocn);
+	//	by specifying nMenuId here, each tab page has its own menu, below the tab pages control
+	ICtlTabPage* hTabPage2 = MakeTabPage(hTabPages, NOMENU);
+	IControl* hMainCtrl2 = MakeMainCtrl(hTabPage2, &CtlLocn,L"Main content page 2");
 	hTabPage2->CtlSetTabView(hMainCtrl2);
 
 	// make it currently selected
@@ -250,7 +245,7 @@ void* CApplication::OnStartShutdown(void)
 //	Process command string from a menu item pick (sent thru hScriptMgr)
 //	======================================================================
 
-static wchar_t szCmdList[] = L"EXIT\0QUIT\0ABOUT\0HELP\0\0";
+static wchar_t szCmdList[] = L"EXIT\0QUIT\0ABOUT\0HELP\0IDRAW\0\0";
 static wchar_t szPrompt[] = L"Command: ";
 
 void* CApplication::OnMenuScript(MSGP)
@@ -289,12 +284,63 @@ void* CApplication::OnMenuScript(MSGP)
 		hHelpText->Release();
 		break;
 	}
+	case 5: // IDRAW
+		ToggleIDraw(false); // perform actual IDraw change
+		break;
 	default:
 		//	bad command
 		break;
 	}
 
 	return IM_RTN_NOTHING;
+}
+
+//	======================================================================
+//	Toggle between CIDraw and GDI+ Draw
+//	----------------------------------------------------------------------
+//	DX2DIDRAW: no gradient fills, no justified text
+//      loses pRasterTarget when printer ops, need to recreate it
+//	GDIPIDRAW: no gradient fill
+//	CIDraw: no arabic joiners, limited RTL text support
+//		(if any - code might have workaround)
+
+//	With winstyle alpha, there is no:
+//		Title bar
+//		Title bar icons: sysmenu, win title, minimize, maximize, close
+//		Window edges do not grow/shrink
+//		No title bar drag
+//		So we add our own title bar, outline resize,title bar icons,
+//		titlebar drag - see wintest for code for this
+//		if we add this, how do we make it linux compatible?
+//		It does enable full-window transparency when dragging#ifndef _SYS_MSWIN
+//
+//	winStyle = WSTYLE_ALPHA;
+//	winStyle = WSTYLE_BKTITLED | WSTYLE_DPISCALESIZE | WSTYLE_DPISCALEORG;
+//	winStyle = WSTYLE_BKTITLED;
+//	winStyle = WSTYLE_TITLED | WSTYLE_DX2DIDRAW;
+//	winStyle = WSTYLE_BKTITLED | WSTYLE_GDIPIDRAW;
+//	======================================================================
+
+void CApplication::ToggleIDraw(bool fSetupOnly)
+{
+#ifndef _SYS_MSWIN
+	winStyle = WSTYLE_BKTITLED | WSTYLE_DPISCALESIZE | WSTYLE_DPISCALEORG;
+	return;
+#else	
+	//	toggle the winStyle flags
+	if (ixIDraw != 0)
+		winStyle = WSTYLE_BKTITLED | WSTYLE_GDIPIDRAW;
+	else
+		winStyle = WSTYLE_BKTITLED;
+	ixIDraw = 1 - ixIDraw;
+
+	if (fSetupOnly)
+		return;
+
+	//	change window's winstyle settings
+
+	//	resize and redraw hWindow
+#endif
 }
 
 //	======================================================================

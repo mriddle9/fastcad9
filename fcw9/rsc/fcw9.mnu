@@ -10,5 +10,6 @@
 2,2,0,Exit,exit.png,EXIT;
 
 3,-1,1,Main...,main,
+3,3,0,IDraw,idraw.nmp,IDRAW;
 3,3,0,About,about.bmp,ABOUT;
 3,3,0,Help,help.png,HELP;

@@ -310,7 +310,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_USINGFWKSTATICLIB;_SYS_MSWIN;_OS64;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\evtk3src\fwkc\sdk;..\..\..\..\evtk3src\fwkw\sdk</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\evtk4src\fwkc\sdk;..\..\..\..\evtk4src\fwkw\sdk</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -332,7 +332,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_USINGFWKSTATICLIB;_SYS_MSWIN;_OS64;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\evtk3src\fwkc\sdk;..\..\..\..\evtk3src\fwkw\sdk</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\evtk4src\fwkc\sdk;..\..\..\..\evtk4src\fwkw\sdk</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>

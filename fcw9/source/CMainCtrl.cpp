@@ -17,7 +17,7 @@ DLLEXPORT IDialog* MakeDlgAbout(void);
 class CMainCtrl : public CControl
 {
 public:
-	CMainCtrl(IControl* hParent,CTLLOCN* pLocn);
+	CMainCtrl(IControl* hParent,CTLLOCN* pLocn,wchar_t* pTTip);
 	~CMainCtrl(void);
 	virtual void* Msg(MSGDISPATCH);
 	void* OnKey(MSGP);
@@ -33,9 +33,9 @@ public:
 //	Class factory
 //	======================================================================
 
-IControl* MakeMainCtrl(IControl* hParent, CTLLOCN* pLocn)
+IControl* MakeMainCtrl(IControl* hParent, CTLLOCN* pLocn,wchar_t* pTTip)
 {
-	return (IControl*) new CMainCtrl(hParent, pLocn);
+	return (IControl*) new CMainCtrl(hParent, pLocn,pTTip);
 }
 
 //	======================================================================
@@ -44,16 +44,20 @@ IControl* MakeMainCtrl(IControl* hParent, CTLLOCN* pLocn)
 
 static uint32_t ctrlid = 100;
 
-CMainCtrl::CMainCtrl(IControl* hparent, CTLLOCN* pLocn)
+CMainCtrl::CMainCtrl(IControl* hparent, CTLLOCN* pLocn,wchar_t* pTTip)
 	:CControl(hparent, (CTLLOCN*)pLocn,0)
 {
 	nBkgndColor = COLOR_LTBLUE;
 	hTabTitle = MakeStr("Status");
 	PageData.pTitleText = hTabTitle->StrTextPtr();
+	//	selected page tab color
 	PageData.nSelTabTextColor = COLOR_BLUE;   // tab text color
 	PageData.nSelTabBkgnd = COLOR_WHITE; // tab background color
+	//	non-selected page tabs
 	PageData.nNSTabTextColor = COLOR_WHITE;   // tab text color
-	PageData.nNSTabBkgnd = 0xFFA08060; // tab background color
+	PageData.nNSTabBkgnd = 0xFFA08060; // tab bkgnd - slate blue
+
+	PageData.pTooltip = pTTip;
 
 	((CControl*)this)->nTextColor = COLOR_WHITE;
 	((CControl*)this)->nBkgndColor = COLOR_BLACK;
@@ -81,7 +85,7 @@ void* CMainCtrl::Msg(MSGDISPATCH)
 	case MSG_CtlMouseEvent:		return OnMouseEvent(MPPTR);
 	case MSG_CtlNotifyKeyDown:	return OnKey(MPPTR);
 
-	case MSG_CtlGetPageData:  return MRTNVAL(&PageData);
+	case MSG_CtlGetPageData:	return MRTNVAL(&PageData);
 
 	case MSG_ScriptLine:
 	case MSG_ScriptText:		return OnMenuScript(MPPTR);
